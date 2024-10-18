@@ -1,0 +1,133 @@
+services:
+    mongodb:
+        image: mongo:latest
+        container_name: mongo-latest
+        ports:
+            - "27017:27017"
+        environment:
+            MONGO_INITDB_ROOT_USERNAME: root
+            MONGO_INITDB_ROOT_PASSWORD: root
+        networks:
+            - market-pro
+        restart: always
+        volumes:
+            - ./mongo:/data/db
+    eureka-service:
+        build:
+            context: ./
+            dockerfile: ./eureka-service/Dockerfile
+        container_name: eureka-service
+        env_file:
+            - ./eureka-service/.env
+        ports:
+            - "8761:8761"
+        networks:
+            - market-pro
+        depends_on:
+            - mongodb
+        restart: always
+    gateway-service:
+        build:
+            context: ./
+            dockerfile: ./gateway-service/Dockerfile
+        container_name: gateway-service
+        env_file:
+            - ./gateway-service/.env
+        ports:
+            - "8000:8000"
+        depends_on:
+            - eureka-service
+        networks:
+            - market-pro
+        restart: always
+    auth-service:
+        build:
+            context: ./
+            dockerfile: ./auth-service/Dockerfile
+        container_name: auth-service
+        env_file:
+            - ./auth-service/.env
+        ports:
+            - "9000:9000"
+        depends_on:
+            - eureka-service
+        networks:
+            - market-pro
+        restart: always
+    user-service:
+        build:
+            context: ./
+            dockerfile: ./user-service/Dockerfile
+        container_name: user-service
+        env_file:
+            - ./user-service/.env
+        ports:
+            - "8001:8001"
+        depends_on:
+            - mongodb
+            - eureka-service
+            - gateway-service
+            - auth-service
+        networks:
+            - market-pro
+        restart: always
+    product-service:
+        build:
+            context: ./
+            dockerfile: ./product-service/Dockerfile
+        container_name: product-service
+        ports:
+            - "8002:8002"
+        env_file:
+            - ./product-service/.env
+        depends_on:
+            - mongodb
+            - eureka-service
+            - gateway-service
+            - auth-service
+        networks:
+            - market-pro
+        restart: always
+
+    order-service:
+        build:
+            context: ./
+            dockerfile: ./order-service/Dockerfile
+        container_name: order-service
+        env_file:
+            - ./order-service/.env
+        ports:
+            - "8003:8003"
+        depends_on:
+            - mongodb
+            - eureka-service
+            - product-service
+            - gateway-service
+            - auth-service
+        networks:
+            - market-pro
+        restart: always
+    inventory-service:
+        build:
+            context: ./
+            dockerfile: ./inventory-service/Dockerfile
+        container_name: inventory-service
+        env_file:
+            - ./order-service/.env
+        ports:
+            - "8004:8004"
+        depends_on:
+            - mongodb
+            - eureka-service
+            - gateway-service
+            - auth-service
+        networks:
+            - market-pro
+        restart: always
+volumes:
+    mongo:
+        name: mongo
+
+networks:
+    market-pro:
+        name: market-pro
