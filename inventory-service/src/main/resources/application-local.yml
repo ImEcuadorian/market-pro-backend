@@ -1,0 +1,13 @@
+spring:
+    application:
+        name: ${SPRING_APPLICATION_NAME:inventory-service}
+
+server:
+    port: 8004
+
+eureka:
+    client:
+        service-url:
+            defaultZone: http://eureka-service:8761/eureka/
+    instance:
+        prefer-ip-address: true

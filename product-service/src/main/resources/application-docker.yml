@@ -1,0 +1,28 @@
+spring:
+    application:
+        name: ${SPRING_APPLICATION_NAME:product-service}
+
+    data:
+        mongodb:
+            uri: mongodb://${DATABASE_USERNAME:root}:${DATABASE_PASSWORD:root}@${DATABASE_HOST:mongodb}:${DATABASE_PORT:27017}/
+            database: ${DATABASE_NAME:product_service}
+            auto-index-creation: true
+
+    security:
+        oauth2:
+            resourceserver:
+                jwt:
+                    issuer-uri: "http://auth-service:9000"
+    messages:
+        basename: language/messages
+        encoding: UTF-8
+
+server:
+    port: ${PORT:8002}
+
+eureka:
+    client:
+        service-url:
+            defaultZone: http://${EUREKA_CLIENT_SERVICE:eureka-service}:${EUREKA_SERVER_PORT:8761}/eureka/
+    instance:
+        prefer-ip-address: true

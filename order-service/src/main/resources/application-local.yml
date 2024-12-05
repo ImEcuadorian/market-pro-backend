@@ -1,0 +1,25 @@
+spring:
+    application:
+        name: order-service
+
+    data:
+        mongodb:
+            uri: mongodb://root:root@localhost:27017/
+            database: order_service
+            auto-index-creation: true
+
+#    security:
+#        oauth2:
+#            resourceserver:
+#                jwt:
+#                    issuer-uri: "http://127.0.0.1:9000"
+
+server:
+    port: 8003
+
+eureka:
+    client:
+        service-url:
+            defaultZone: http://127.0.0.1:8761/eureka/
+    instance:
+        prefer-ip-address: true

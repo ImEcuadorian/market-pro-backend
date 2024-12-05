@@ -1,0 +1,15 @@
+logging:
+    level:
+        org.springframework.security: trace
+spring:
+  application:
+      name: auth-service
+server:
+    port: 9000
+
+eureka:
+    client:
+        service-url:
+            defaultZone: http://127.0.0.1:8761/eureka/
+    instance:
+        prefer-ip-address: true

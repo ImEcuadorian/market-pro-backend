@@ -24,7 +24,7 @@ repositories {
 }
 
 extra["springCloudVersion"] = "2023.0.3"
-val jetBrainsVersion = "24.0.0";
+val jetBrainsVersion = "24.0.0"
 
 dependencies {
     implementation("org.springframework.boot:spring-boot-starter-data-mongodb")

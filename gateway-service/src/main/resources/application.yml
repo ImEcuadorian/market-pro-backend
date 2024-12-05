@@ -1,0 +1,63 @@
+logging:
+    level:
+        org.springframework.security: DEBUG
+server:
+    port: ${PORT:8000}
+spring:
+    application:
+        name: ${SPRING_APPLICATION_NAME:gateway-service}
+    cloud:
+        gateway:
+            mvc:
+                routes:
+                    -   id: auth-service
+                        uri: lb://auth-service
+                        predicates:
+                            - Path=/login
+                    -   id: product-service
+                        uri: lb://product-service
+                        predicates:
+                            - Path=/products/**
+                        filters:
+                            - TokenRelay
+                    -   id: order-service
+                        uri: lb://order-service
+                        predicates:
+                            - Path=/orders/**
+                        filters:
+                            - TokenRelay
+                    -   id: user-service
+                        uri: lb://user-service
+                        predicates:
+                            - Path=/users/**
+                        filters:
+                            - TokenRelay
+    security:
+        oauth2:
+            resourceserver:
+                jwt:
+                    issuer-uri: "http://auth-service:9000"
+            client:
+                registration:
+                    auth-service:
+                        provider: spring
+                        client-id: auth-service
+                        client-secret: 12345
+                        authorization-grant-type: authorization_code
+                        redirect-uri: "http://127.0.0.1:8000/authorized"
+                        scope:
+                            - openid
+                            - profile
+                            - read
+                            - write
+                        client-name: auth-service
+                provider:
+                    spring:
+                        issuer-uri: "http://auth-service:9000"
+
+eureka:
+    client:
+        serviceUrl:
+            defaultZone: http://eureka-service:8761/eureka/
+    instance:
+        preferIpAddress: true
